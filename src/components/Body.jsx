@@ -3,11 +3,13 @@ import RestaurantCard from "./RestaurantCard";
 import Filter from "./Filter";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router-dom";
+import useOnlineStatus from "../utils/useOnlineStatus";
 
 export default function Body() {
   const [listOfMeals, setListOfMeals] = useState([]);
   const [filterMeals, setFilterMeals] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const status = useOnlineStatus();
 
   useEffect(() => {
     fetchMeals();
@@ -32,6 +34,14 @@ export default function Body() {
       return [];
     }
   };
+
+  if(status === false) {
+    return(
+      <div className="body-card">
+        <h1>Oops!!! You are currently offline. Kindly check your internet connection</h1>
+      </div>
+    )
+  }
 
 
   return (

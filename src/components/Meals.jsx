@@ -1,15 +1,11 @@
-import { useEffect, useState } from "react";
 import Shimmer from "./Shimmer";
 import { useParams } from "react-router-dom";
+import useFetchMeals from "../utils/useFetchMeals";
 
 const Meals = () => {
-  const [mealInfo, setMealInfo] = useState(null);
 
   const { mealId } = useParams();
-
-  useEffect(() => {
-    fetchMeal();
-  }, []);
+  const mealInfo = useFetchMeals(mealId); // Using custom hook
 
   const getIngredients = (meal) => {
     const ingredients = [];
@@ -22,14 +18,6 @@ const Meals = () => {
       count++;
     }
     return ingredients;
-  };
-
-  const fetchMeal = async () => {
-    const meal = await fetch(
-      `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealId}`
-    );
-    const res = await meal.json();
-    setMealInfo(res?.meals[0]);
   };
 
   return (
