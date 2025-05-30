@@ -37,7 +37,7 @@ export default function Body() {
 
   if(status === false) {
     return(
-      <div className="body-card">
+      <div className="body-card flex m-5 bg-red-100 shadow-lg rounded justify-center">
         <h1>Oops!!! You are currently offline. Kindly check your internet connection</h1>
       </div>
     )
@@ -45,41 +45,48 @@ export default function Body() {
 
 
   return (
-    <div className="body-card">
-      <div className="added-functionalities">
-        <div className="filter-nonVegDishes">
-          <Filter
+    <div className="body-card m-5 bg-red-100 shadow-lg rounded">
+      <div className="added-functionalities flex">
+        <div className="filter-nonVegDishes p-4 font-weight: 800">
+          <button className="bg-red-500 px-2 py-1 rounded">
+            <Filter
             dishes={["chicken", "seafood", "beef", "pork", "lamb"]}
             dishname="Non Veg Dishes"
             meals = {listOfMeals}
             setMeals={setFilterMeals}
           />
+          </button>
         </div>
-        <div className="filter-vegDishes">
-          <Filter
+        <div className="filter-vegDishes p-4 font-weight: 800">
+          <button className="bg-red-500 px-2 py-1 rounded">
+            <Filter
             dishes={["vegetarian", "side", "miscellaneous"]}
             dishname="Veg Dishes"
             meals = {listOfMeals}
             setMeals={setFilterMeals}
           />
+          </button>
         </div>
-        <div className="filter-dessertDishes">
-          <Filter
+        <div className="filter-dessertDishes p-4 font-weight: 800">
+          <button className="bg-red-500 px-2 py-1 rounded">
+            <Filter
             dishes={["dessert"]}
             dishname="Desserts"
             meals = {listOfMeals}
             setMeals={setFilterMeals}
           />
+          </button>
         </div>
-        <div className="serach-dishes">
+        <div className="serach-dishes p-4 font-weight: 800">
           <input
             type="text"
             placeholder="Search Meal"
-            className="search-bar"
+            className="search-bar p-1 rounded"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           <button
+            className="mx-2 px-2 py-1 bg-red-500 rounded font-weight: 800"
             onClick={() => {
               const filteredMeals = listOfMeals.filter((meal) =>
                 meal.strMeal.toLowerCase().includes(searchQuery.toLowerCase())
@@ -91,7 +98,7 @@ export default function Body() {
           </button>
         </div>
       </div>
-      <div className="dish-container">
+      <div className="dish-container my-10 mx-5 flex flex-wrap">
         {filterMeals.length === 0 ? (
           <Shimmer />
         ) : (
