@@ -1,7 +1,11 @@
-const Contact = () => {
-    return (
-        <h1>Contact Us</h1>
-    )
-}
+import useOnlineStatus from "../utils/useOnlineStatus";
+import InternetStatus from "./InternetStatus";
 
-export default Contact
+const Contact = () => {
+  const status = useOnlineStatus();
+
+  if (status === false) return <InternetStatus />;
+  return <h1>Contact Us</h1>;
+};
+
+export default Contact;

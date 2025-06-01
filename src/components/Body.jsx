@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
-import RestaurantCard from "./RestaurantCard";
+import RestaurantCard, {WithMiscLabel} from "./RestaurantCard";
 import Filter from "./Filter";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router-dom";
 import useOnlineStatus from "../utils/useOnlineStatus";
+import InternetStatus from "./InternetStatus";
 
 export default function Body() {
   const [listOfMeals, setListOfMeals] = useState([]);
   const [filterMeals, setFilterMeals] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const WithLabel = WithMiscLabel(RestaurantCard);
   const status = useOnlineStatus();
 
   useEffect(() => {
@@ -17,65 +20,58 @@ export default function Body() {
 
   const fetchMeals = async () => {
     try {
+      setIsLoading(true); // Show shimmer
       const apiCall = await fetch(
-        // `https://www.themealdb.com/api/json/v1/1/search.php?s=${searchTerm}`
         "https://www.themealdb.com/api/json/v1/1/search.php?s"
       );
       const json = await apiCall.json();
-      console.log(json);
       const meals = json?.meals || [];
       setListOfMeals(meals);
       setFilterMeals(meals);
-      return meals;
+      console.log(meals);
     } catch (e) {
       console.error(e);
       setListOfMeals([]);
       setFilterMeals([]);
-      return [];
+    } finally {
+      setIsLoading(false); // Hide shimmer
     }
   };
 
-  if(status === false) {
-    return(
-      <div className="body-card flex m-5 bg-red-100 shadow-lg rounded justify-center">
-        <h1>Oops!!! You are currently offline. Kindly check your internet connection</h1>
-      </div>
-    )
-  }
-
+  if (status === false) return <InternetStatus />;
 
   return (
     <div className="body-card m-5 bg-red-100 shadow-lg rounded">
       <div className="added-functionalities flex">
         <div className="filter-nonVegDishes p-4 font-weight: 800">
-          <button className="bg-red-500 px-2 py-1 rounded">
+          <span className="bg-red-500 px-2 py-1 rounded">
             <Filter
-            dishes={["chicken", "seafood", "beef", "pork", "lamb"]}
-            dishname="Non Veg Dishes"
-            meals = {listOfMeals}
-            setMeals={setFilterMeals}
-          />
-          </button>
+              dishes={["chicken", "seafood", "beef", "pork", "lamb"]}
+              dishname="Non Veg Dishes"
+              meals={listOfMeals}
+              setMeals={setFilterMeals}
+            />
+          </span>
         </div>
         <div className="filter-vegDishes p-4 font-weight: 800">
-          <button className="bg-red-500 px-2 py-1 rounded">
+          <span className="bg-red-500 px-2 py-1 rounded">
             <Filter
-            dishes={["vegetarian", "side", "miscellaneous"]}
-            dishname="Veg Dishes"
-            meals = {listOfMeals}
-            setMeals={setFilterMeals}
-          />
-          </button>
+              dishes={["vegetarian", "side", "miscellaneous"]}
+              dishname="Veg Dishes"
+              meals={listOfMeals}
+              setMeals={setFilterMeals}
+            />
+          </span>
         </div>
         <div className="filter-dessertDishes p-4 font-weight: 800">
-          <button className="bg-red-500 px-2 py-1 rounded">
+          <span className="bg-red-500 px-2 py-1 rounded">
             <Filter
-            dishes={["dessert"]}
-            dishname="Desserts"
-            meals = {listOfMeals}
-            setMeals={setFilterMeals}
-          />
-          </button>
+              dishes={["dessert"]}
+              dishname="Desserts"
+              meals={listOfMeals}
+              setMeals={setFilterMeals}
+            />
+          </span>
         </div>
         <div className="serach-dishes p-4 font-weight: 800">
           <input
@@ -99,11 +95,15 @@ export default function Body() {
         </div>
       </div>
       <div className="dish-container my-10 mx-5 flex flex-wrap">
-        {filterMeals.length === 0 ? (
+        {isLoading ? (
           <Shimmer />
+        ) : filterMeals.length === 0 ? (
+          <h2 className="m-5 text-xl">No meals found</h2>
         ) : (
           filterMeals.map((meal) => (
-            <Link key={meal.idMeal} to = {"/meals/" + meal.idMeal}><RestaurantCard resData={meal} /></Link>
+            <Link key={meal.idMeal} to={"/meals/" + meal.idMeal}>
+              {meal.strCategory === "Miscellaneous" ? (<WithLabel resData={meal}/>) : (<RestaurantCard resData={meal} />) }    
+            </Link>
           ))
         )}
       </div>
